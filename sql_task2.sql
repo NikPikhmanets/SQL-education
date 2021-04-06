@@ -4,17 +4,15 @@
 -- “Studio name”, “Full name of the actor” (one entry), “Number of films”
 
 
-SELECT 
-    s.name 'Studio name',
-    CONCAT(a.first_name, '  ', a.last_name) AS FullName,
-    COUNT(f.movie_id) 'Number of films'
-FROM
-    studios s
-        INNER JOIN
-    filmmaking f ON s.id = f.studio_id
-        INNER JOIN
-    roles r ON f.movie_id = r.movie_id
-        INNER JOIN
-    actors a ON r.actor_id = a.id
-GROUP BY r.actor_id , s.name
+SELECT s.name                                  'Studio name',
+       CONCAT(a.first_name, '  ', a.last_name) 'Full name',
+       COUNT(DISTINCT f.movie_id)              'Number of films'
+FROM studios s
+         INNER JOIN
+     filmmaking fm ON s.id = fm.studio_id
+         INNER JOIN
+     fee f ON fm.movie_id = f.movie_id
+         INNER JOIN
+     actors a ON f.actor_id = a.id
+GROUP BY f.actor_id, s.name
 ORDER BY s.name;

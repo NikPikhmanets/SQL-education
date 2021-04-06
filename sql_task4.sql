@@ -7,23 +7,19 @@
 -- “Studio name”, “Number of films”, “Number of payments”, “Amount of fees”, “Average fee”
 
 
-SELECT 
-    s.name 'Studio name',
-    COUNT(f.movie_id) 'Number of films',
-    COUNT(fee.size) 'Number of payments',
-    SUM(fee.size) 'Sum all fee',
-    AVG(fee.size) AS AVGfee
-FROM
-    education.studios s
-        INNER JOIN
-    filmmaking f ON s.id = f.studio_id
-        INNER JOIN
-    movies m ON f.movie_id = m.id
-        AND (YEAR(NOW()) - YEAR(m.release_date)) <= 10
-        INNER JOIN
-    roles r ON f.movie_id = r.movie_id
-        INNER JOIN
-    fee ON fee.actor_id = r.actor_id
-        AND fee.movie_id = f.movie_id
-GROUP BY s.name
-ORDER BY AVGfee DESC; 
+SELECT s.name                     'Studio name',
+       COUNT(DISTINCT f.movie_id) 'Number of films',
+       COUNT(DISTINCT fee.size)   'Number of payments',
+       SUM(fee.size)              'Sum all fee',
+       AVG(fee.size)              'AvgFee'
+FROM studios s
+         INNER JOIN
+     filmmaking f ON s.id = f.studio_id
+         INNER JOIN
+     movies m ON f.movie_id = m.id AND (YEAR(NOW()) - YEAR(m.release_date)) <= 10
+         INNER JOIN
+     fee ON fee.movie_id = m.id
+         INNER JOIN
+     actors a ON fee.actor_id = a.id
+GROUP BY a.id, s.name
+ORDER BY 'AvgFee' DESC;
